@@ -31,6 +31,7 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mBtnShow = (Button) view.findViewById(R.id.btn_show);
+        mBtnClear = (Button) view.findViewById(R.id.btn_clear);
         mTextLoc = (TextView) view.findViewById(R.id.loc_text);
     }
 
@@ -38,11 +39,14 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
     public void onResume() {
         super.onResume();
         mBtnShow.setOnClickListener(this);
+        mBtnClear.setOnClickListener(this);
     }
+
 
     @Override
     public void onStop() {
         mBtnShow.setOnClickListener(null);
+        mBtnClear.setOnClickListener(null);
         super.onStop();
     }
 
@@ -53,6 +57,8 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
                     .replace(R.id.frame, new TrackMap())
                     .addToBackStack(null)
                     .commit();
+        } else if (v == mBtnClear) {
+            mTextLoc.setText("");
         }
     }
 
@@ -71,6 +77,7 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if (cursor.moveToFirst()) {
+            mTextLoc.setText("");
             do {
                 mTextLoc.append(cursor.getString(cursor.getColumnIndex("position")) + " --- " +
                         cursor.getString(cursor.getColumnIndex("latitude")) + "," + cursor.getString(cursor.getColumnIndex("longitude")) + "\n");
