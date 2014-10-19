@@ -100,9 +100,8 @@ public class TrackService extends Service implements
             Log.d("TAG", "List of the addresses is empty");
         } else {
             Address address = addresses.get(0);
-            textAddr = address.getLocality() + ", " + address.getCountryName();
+            textAddr = address.getAddressLine(0) + ", " + address.getLocality() + ", " + address.getCountryName();
         }
-
         cv.put("position", textAddr);
         cv.put("latitude", location.getLatitude());
         cv.put("longitude", location.getLongitude());
@@ -117,10 +116,10 @@ public class TrackService extends Service implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i("TAG", "GoogleApi connected");
-        final Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApi);
+        /*final Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApi);
         if (location != null) {
             onLocationChanged(location);
-        }
+        }*/
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApi, mRequest, this);
     }
 

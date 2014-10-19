@@ -4,10 +4,13 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.inquallity.postracker.sqlite.TrackSql;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +26,7 @@ public class TrackMap extends MapFragment implements android.app.LoaderManager.L
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getLoaderManager().initLoader(0, Bundle.EMPTY, this);
+        getLoaderManager().initLoader(1, Bundle.EMPTY, this);
 
     }
 
@@ -31,13 +34,9 @@ public class TrackMap extends MapFragment implements android.app.LoaderManager.L
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        /*if (getMap() != null) {
+        getMap().setMyLocationEnabled(true);
+        getMap().setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-            *//*getMap().clear();*//*
-
-        } else {
-            Toast.makeText(getActivity(), "Map is empty!", Toast.LENGTH_SHORT).show();
-        }*/
 
     }
 
@@ -55,20 +54,14 @@ public class TrackMap extends MapFragment implements android.app.LoaderManager.L
                         cursor.getDouble(cursor.getColumnIndex("longitude"))));
             } while (cursor.moveToNext());
         }
-/*
+
         if (mLocationList.isEmpty()){
             Log.d("TAG", "List of locations is empty");
         }
-        getMap().setMyLocationEnabled(true);
-        getMap().setMapType(GoogleMap.MAP_TYPE_HYBRID);
         getMap().addPolyline(new PolylineOptions()
                 .addAll(mLocationList)
-*//*
-                .add(new LatLng(40, 80))
-                .add(new LatLng(50, 85))
-                .add(new LatLng(60, 75))*//*
                 .width(LINE_WIDTH)
-                .color(getResources().getColor(android.R.color.holo_green_light)));*/
+                .color(getResources().getColor(android.R.color.holo_green_light)));
     }
 
     @Override
