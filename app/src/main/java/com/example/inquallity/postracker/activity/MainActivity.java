@@ -23,6 +23,5 @@ public class MainActivity extends Activity {
         }
         startService(new Intent(getApplicationContext(), TrackService.class));
     }
-
  }
 

@@ -69,7 +69,7 @@ public class TrackService extends Service implements
     @Override
     public void onDestroy() {
         Log.d(TAG, "Service has been stopped");
-        Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
 
     }
 
