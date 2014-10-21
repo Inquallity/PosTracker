@@ -17,13 +17,14 @@ import android.widget.TextView;
 import com.example.inquallity.postracker.R;
 import com.example.inquallity.postracker.service.TrackService;
 import com.example.inquallity.postracker.sqlite.TrackSql;
+import com.example.inquallity.postracker.sqlite.TrackSqlHelper;
 
 public class TrackCollect extends Fragment implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
     private TextView mTextLoc;
     private Button mBtnClear;
     private Button mBtnShow;
     private Button mBtnStartService;
-    private boolean mServiceStarted = true;
+    private boolean mServiceStarted = false;
 
     @Nullable
     @Override
@@ -69,17 +70,21 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
                 break;
             case R.id.btn_clear:
                 mTextLoc.setText("");
+                TrackSqlHelper helper = new TrackSqlHelper(getActivity());
+                helper.onUpgrade(helper.getReadableDatabase(), TrackSql.DATABASE_VERSION, TrackSql.DATABASE_VERSION);
                 break;
             case R.id.btn_start_service:
-                Intent intent = new Intent(getActivity().getApplicationContext(), TrackService.class);
+
                 if (mServiceStarted) {
-//                    getActivity().stopService(intent);
-                    TrackService service = new TrackService();
-                    service.onDestroy();
+                    getActivity().getApplicationContext().stopService
+                            (new Intent(getActivity().getApplicationContext(), TrackService.class));
                     mServiceStarted = false;
+                    mBtnStartService.setText("btn_start_service");
                 } else {
-                    getActivity().startService(intent);
+                    getActivity().getApplicationContext().startService
+                            (new Intent(getActivity().getApplicationContext(), TrackService.class));
                     mServiceStarted = true;
+                    mBtnStartService.setText("btn_stop_service");
                 }
                 break;
         }
@@ -88,7 +93,7 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, Bundle.EMPTY, this);
+        getLoaderManager().initLoader(R.id.collect_loader, Bundle.EMPTY, this);
     }
 
     @Override
@@ -99,7 +104,6 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         if (cursor.moveToFirst()) {
-            mTextLoc.setText("");
             do {
                 mTextLoc.append(cursor.getString(cursor.getColumnIndex("position")) + " --- " +
                         cursor.getString(cursor.getColumnIndex("latitude")) + "," +

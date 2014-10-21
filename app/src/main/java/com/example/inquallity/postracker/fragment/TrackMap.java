@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.inquallity.postracker.R;
 import com.example.inquallity.postracker.sqlite.TrackSql;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -26,7 +27,7 @@ public class TrackMap extends MapFragment implements android.app.LoaderManager.L
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(1, Bundle.EMPTY, this);
+        getLoaderManager().initLoader(R.id.map_loader, Bundle.EMPTY, this);
 
     }
 

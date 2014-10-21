@@ -8,8 +8,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.TextUtils;
+import android.text.format.DateUtils;
+import android.text.format.Time;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.inquallity.postracker.sqlite.TrackSql;
 import com.google.android.gms.common.ConnectionResult;
@@ -19,6 +21,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,9 +39,7 @@ public class TrackService extends Service implements
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "Service has been started");
-        Toast.makeText(getApplicationContext(), "Service has been started", Toast.LENGTH_LONG).show();
-
+        Log.d(TAG, "Service onCreate");
         if (mGoogleApi == null) {
             mGoogleApi = new GoogleApiClient.Builder(getApplicationContext())
                     .addApi(LocationServices.API)
@@ -45,40 +48,31 @@ public class TrackService extends Service implements
                     .build();
         }
         mRequest = LocationRequest.create();
-        mRequest.setInterval(5000);
-        mRequest.setFastestInterval(1000);
+        mRequest.setFastestInterval(DateUtils.MINUTE_IN_MILLIS * 8);
+        mRequest.setInterval(DateUtils.MINUTE_IN_MILLIS * 20);
         mGoogleApi.connect();
     }
 
-    //Обработка некорректного завершения сервиса
-    //Чаще всего используют, чтобы создать и запустить отдельный поток для сервиса
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("TAG", "On starting...");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "I am a service and i doing that shit into Log.d");
-        /*stopSelf(startId);*/
-
-            }
-        });
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "Service has been stopped");
-//        Toast.makeText(getApplicationContext(), "Service has been stopped", Toast.LENGTH_LONG).show();
-
+        if (mGoogleApi.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApi, this);
+            Log.d(TAG, "GoogleApiService has been stopped");
+            mGoogleApi.disconnect();
+            Log.d(TAG, "Service has been stopped");
+        }
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
     @Override
     public void onLocationChanged(Location location) {
@@ -94,18 +88,23 @@ public class TrackService extends Service implements
             e.printStackTrace();
         }
         if (addresses == null) {
-            Log.d("TAG", "Addresses is null");
+            Log.d("TAG", "Addresses is empty");
 
-        } else if (addresses.size() == 0) {
-            Log.d("TAG", "List of the addresses is empty");
         } else {
             Address address = addresses.get(0);
             textAddr = address.getAddressLine(0) + ", " + address.getLocality() + ", " + address.getCountryName();
         }
-        cv.put("position", textAddr);
-        cv.put("latitude", location.getLatitude());
-        cv.put("longitude", location.getLongitude());
-        getContentResolver().insert(TrackSql.URI, cv);
+        if (location.getAccuracy() < 100.f) {
+            cv.put("position", textAddr);
+            cv.put("latitude", location.getLatitude());
+            cv.put("longitude", location.getLongitude());
+            getContentResolver().insert(TrackSql.URI, cv);
+        } else {
+            Calendar calendar = Calendar.getInstance();
+            cv.put("position", String.valueOf(calendar.getTime()) + "::" + "Дикий пиздец по координатам --->");
+            cv.put("latitude", location.getLatitude());
+            cv.put("longitude", location.getLongitude());
+        }
     }
 
     @Override
@@ -116,10 +115,6 @@ public class TrackService extends Service implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i("TAG", "GoogleApi connected");
-        /*final Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApi);
-        if (location != null) {
-            onLocationChanged(location);
-        }*/
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApi, mRequest, this);
     }
 

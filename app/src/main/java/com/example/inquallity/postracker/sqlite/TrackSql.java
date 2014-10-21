@@ -68,24 +68,4 @@ public class TrackSql extends ContentProvider {
         }
         return affectedRows;
     }
-
-    //execSQL("CREATE TABLE IF NOT EXISTS ololo (_id INTEGER PRIMARY KEY, position TEXT, latitude DOUBLE, longitude DOUBLE);
-    private class TrackSqlHelper extends SQLiteOpenHelper {
-
-        public TrackSqlHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
-                    " (_id INTEGER PRIMARY KEY, position TEXT, latitude REAL, longitude REAL);");
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME + ";");
-            onCreate(db);
-        }
-    }
 }
