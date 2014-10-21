@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.example.inquallity.postracker.R;
 import com.example.inquallity.postracker.service.TrackService;
 import com.example.inquallity.postracker.sqlite.TrackSql;
-import com.example.inquallity.postracker.sqlite.TrackSqlHelper;
 
 public class TrackCollect extends Fragment implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
     private TextView mTextLoc;
@@ -70,8 +69,7 @@ public class TrackCollect extends Fragment implements View.OnClickListener, Load
                 break;
             case R.id.btn_clear:
                 mTextLoc.setText("");
-                TrackSqlHelper helper = new TrackSqlHelper(getActivity());
-                helper.onUpgrade(helper.getReadableDatabase(), TrackSql.DATABASE_VERSION, TrackSql.DATABASE_VERSION);
+                TrackSql.mDbVersion ++;
                 break;
             case R.id.btn_start_service:
 
