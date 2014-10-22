@@ -15,7 +15,7 @@ import com.example.inquallity.postracker.BuildConfig;
 public class TrackSql extends ContentProvider {
 
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID;
-    public static final int DATABASE_VERSION = 1;
+    public static int mDbVersion = 1;
     public static final String DATABASE_NAME = "tracker.db";
     public static final String TABLE_NAME = "location_table";
     public static final Uri URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME);
@@ -69,22 +69,21 @@ public class TrackSql extends ContentProvider {
         return affectedRows;
     }
 
-    //execSQL("CREATE TABLE IF NOT EXISTS ololo (_id INTEGER PRIMARY KEY, position TEXT, latitude DOUBLE, longitude DOUBLE);
     private class TrackSqlHelper extends SQLiteOpenHelper {
 
         public TrackSqlHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            super(context, TrackSql.DATABASE_NAME, null, TrackSql.mDbVersion);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_NAME +
-                    " (_id INTEGER PRIMARY KEY, position TEXT, latitude REAL, longitude REAL);");
+            db.execSQL("CREATE TABLE IF NOT EXISTS " + TrackSql.TABLE_NAME +
+                    "(_id INTEGER PRIMARY KEY, position TEXT, latitude REAL, longitude REAL);");
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME + ";");
+            db.execSQL("DROP TABLE IF EXISTS " + TrackSql.TABLE_NAME + ";");
             onCreate(db);
         }
     }

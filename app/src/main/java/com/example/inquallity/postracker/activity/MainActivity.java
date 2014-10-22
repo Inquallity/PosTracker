@@ -21,8 +21,6 @@ public class MainActivity extends Activity {
                     .add(R.id.frame, new TrackCollect())
                     .commit();
         }
-        startService(new Intent(getApplicationContext(), TrackService.class));
     }
-
- }
+}
 

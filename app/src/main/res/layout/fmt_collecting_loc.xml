@@ -14,8 +14,7 @@
         <TextView
             android:id="@+id/loc_text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="TEXT"
+            android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textStyle="bold|italic" />
     </ScrollView>
@@ -31,13 +30,19 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="btn_clear" />
+            android:text="@string/btn_clear_text" />
 
         <Button
             android:id="@+id/btn_show"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="btn_show" />
+            android:text="@string/btn_show_text" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_start_service"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_start_service_text" />
 </LinearLayout>
